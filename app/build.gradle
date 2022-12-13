@@ -40,4 +40,13 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // rxjava3
+    def rxjava_version = "3.0.4"
+    def ext_rxjava_version = "3.0.0"
+    implementation "io.reactivex.rxjava3:rxandroid:$ext_rxjava_version"
+    implementation "io.reactivex.rxjava3:rxkotlin:$ext_rxjava_version"
+    implementation "io.reactivex.rxjava3:rxjava:$rxjava_version"
 }
