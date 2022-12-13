@@ -1,7 +1,6 @@
 package com.example.rxjava
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
@@ -22,22 +21,6 @@ class MainActivity : AppCompatActivity() {
 
         val someObservable = Observable.just(-1, 0, 1, 1, 3, 4, 5, 6, 7, 10)
 
-//
-//        Отфильтровать, пропустим или не пропустим объект  дальше
-//        Оператор Map - можем изменять данные
-//        distinctUntilChanged - удаляет дубликаты
-//
-//        debounce - стопорит все процессы в течение указанного времени и
-//         берет последний элемент, который за это время пришел, полезно для ситуации
-//         когда пользователь часто кликает на ui, чтобы отсекать uiEvents
-//          .debounce(100L, TimeUnit.MILLISECONDS)
-//
-//        delay отправляет данные с задержкой:
-//         отдает данные в трубу спстя 5 секунд, как на него подписались
-//        .delay (5000L, TimeUnit.MILLISECONDS)
-//
-//        .repeat(2) - повторяет событиe заданное кол-во раз
-
         someObservable
             .filter {
                 it <= 5
@@ -55,55 +38,43 @@ class MainActivity : AppCompatActivity() {
             )
 
 
-//         Как добавляем подписчиков
+//       Подписчики
         val subscriber1 = object : Observer<Int> {
-            //Подписаться, вызывается, когда подписчик подписался, и возвращает диспосбл, объект, на который мы подписались
             override fun onSubscribe(d: Disposable) {
-                //имеет метод d.dispose() - метод, чтобы всех подписчиков отписать,
                 Timber.tag("RxJava3").d("onSubscribe ")
             }
 
-            //Прописывается логика, что мы должны сделать с данными, когда они пришли, try catch прописывать не надо
-            //Срабатывает на каждый элемент из Just
             override fun onNext(t: Int) {
-                Log.d("RxJava3", "onNext ${t * 10}")
+                Timber.d( "onNext ${t * 10}")
             }
 
-            //Вызывается, когда не сработал OnNext (произошла ошибка), также как и корутины с манадой
-            //Используется для отлавливания ошибок, "местный try catch"
             override fun onError(e: Throwable) {
-                Log.d("RxJava3", "onError $e")
+                Timber.d( "onError $e")
             }
 
-            //Если нет ошибки в OnNext вызывается onComplete
             override fun onComplete() {
-                Log.d("RxJava3", "onComplete ")
+                Timber.d( "onComplete ")
             }
         }
         val subscriber2 = object : Observer<Int> {
 
             override fun onSubscribe(d: Disposable) {
-                Log.d("RxJava3", "onSubscribe 2 ")
+                Timber.d( "onSubscribe 2 ")
             }
 
             override fun onNext(t: Int) {
                 val divideByZero = t / 0
-                Log.d("RxJava3", "onNext 2 $divideByZero")
+                Timber.d("onNext 2 $divideByZero")
             }
 
             override fun onError(e: Throwable) {
-                Log.d("RxJava3", "onError 2$e")
+                Timber.d("onError 2$e")
             }
 
             override fun onComplete() {
-                Log.d("RxJava3", "onComplete 2 ")
+                Timber.d("onComplete 2 ")
             }
         }
-
-//        Как этих подписчиков добавляем в Observable
-//        someObservable.subscribe(subscriber1)
-//        someObservable.subscribe(subscriber2)
-
 
 //        Потоки
 //        doOnNext вся труба с объектами выполняется в main потоке
@@ -123,16 +94,16 @@ class MainActivity : AppCompatActivity() {
         someObservable
             .subscribeOn(Schedulers.newThread())
             .doOnNext {
-                Log.d("RxJava3", "doOnNext ${Thread.currentThread().name}")
+                Timber.d("doOnNext ${Thread.currentThread().name}")
             }
 //            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
-                Log.d("RxJava3", "doOnNext ${Thread.currentThread().name}")
+                Timber.d( "doOnNext ${Thread.currentThread().name}")
             }
             .subscribe(
                 {
-                    Log.d("RxJava3", "onNext $it")
+                    Timber.d( "onNext $it")
                 },
                 {},
                 {}
@@ -151,8 +122,7 @@ class MainActivity : AppCompatActivity() {
             .just(1, 1, 1, 4, 5, 6, 7, 8, 9, 10)
             .onBackpressureBuffer(4)
             .subscribe({
-                Log.d(
-                    "RxJava3", "onNext $it"
+                Timber.d("onNext $it"
                 )
             }, {}, {}
             )
